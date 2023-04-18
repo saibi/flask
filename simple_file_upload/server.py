@@ -1,4 +1,5 @@
 import os
+import glob
 from flask import Flask, render_template, request, send_file, redirect
 
 app = Flask(__name__)
@@ -26,13 +27,33 @@ def upload():
     if request.method == 'POST':
         # Get the uploaded files
         uploaded_files = request.files.getlist('file[]')
+        # Save each file to the server
         for file in uploaded_files:
-            # Save each file to the server
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+            if file.filename:
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+            else:
+                break
         # Redirect to the homepage to show the updated file list
         return redirect('/')
     # Render the upload form
     return render_template('upload.html')
+
+@app.route('/delete/<filename>', methods=['POST'])
+def delete(filename):
+    # Construct the full path to the file
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # Delete the file
+    os.remove(filepath)
+    # Redirect back to the index page
+    return redirect('/')
+
+@app.route('/deleteall', methods=['POST'])
+def deleteall():
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], '*')
+    files = glob.glob(filepath)
+    for f in files:
+        os.remove(f)
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug = True)

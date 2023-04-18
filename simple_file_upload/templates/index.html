@@ -5,16 +5,23 @@
 </head>
 <body>
     <h1>File Server</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="file[]" multiple>
-        <input type="submit" value="Upload File">
+        <input type="submit" value="Upload">
     </form>
-    <hr>
-    <h2>Files on server:</h2>
     <ul>
         {% for file in files %}
-        <li><a href="/download/{{ file }}">{{ file }}</a></li>
+            <li>
+                <a href="/download/{{ file }}">{{ file }}</a>
+                <form action="/delete/{{ file }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
+    <form action="/deleteall" method="POST">
+        <button type="submit">Clear</button>
+    </form>
 </body>
 </html>
