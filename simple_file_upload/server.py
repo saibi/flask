@@ -32,8 +32,9 @@ def upload():
             if file.filename:
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
             else:
-                break
+                return redirect('/')
         # Redirect to the homepage to show the updated file list
+        os.mknod(os.path.join(app.config['UPLOAD_FOLDER'], 'sign.txt'))
         return redirect('/')
     # Render the upload form
     return render_template('upload.html')
@@ -56,5 +57,5 @@ def deleteall():
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(host='0.0.0.0', port=8018, debug = True)
 
